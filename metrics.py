@@ -1,27 +1,30 @@
 """Simple return metrics."""
 
+import numpy as np
+
 
 def daily_return(prices):
-    """Return the daily percentage change."""
-    return prices.pct_change().dropna()
+    """Return the daily log return: ln(P_t / P_{t-1})."""
+    return np.log(prices).diff().dropna()
 
 
 # ---------- volatility ----------
-# Standard annualized volatility from a returns series.
+# Standard annualized volatility from a log-returns series.
 # Multiply by sqrt(252) to annualize daily data.
 # --------------------------------
 
 
 def volatility(returns):
-    """Annualized volatility (plain power)."""
-    return returns.std() * (252 ** 0.5)
+    """Annualized volatility (numpy sqrt)."""
+    return returns.std() * np.sqrt(252)
 
 
 # ---------- cumulative ----------
-# Cumulative return over the whole series.
+# Cumulative log return over the whole series.
+# Log returns are additive, so a plain cumsum is enough.
 # --------------------------------
 
 
 def cumulative(returns):
-    """Cumulative simple return series."""
-    return (1 + returns).cumprod() - 1
+    """Cumulative log return series."""
+    return returns.cumsum()
